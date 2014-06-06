@@ -1,0 +1,13 @@
+data<-read.csv("household_power_consumption.txt",sep=";",stringsAsFactors=F)
+data$Date<-as.Date(data$Date,format="%d/%m/%Y")
+subData<-data[data$Date>=as.Date("2007-02-01") & data$Date <= as.Date("2007-02-02"),]
+rm(data)
+subData$Global_active_power<-as.numeric(subData$Global_active_power)
+indexs=tapply(seq(1:nrow(subData)),weekdays(subData$Date,abbreviate=T),min)
+lab=sapply(indexs,function(x)weekdays(subData[x,1],abbreviate=T))
+indexs=c(indexs,nrow(subData)+1)
+lab=c(lab,weekdays(subData[nrow(subData),1]+1,abbreviate=T))
+png("plot2.png",width=480,height=480)
+plot(subData$Global_active_power,col="black",type="l",xaxt="n",ylab="Global Active Power (kilowatts)",xlab="")
+axis(1,indexs,labels=lab)
+dev.off()
